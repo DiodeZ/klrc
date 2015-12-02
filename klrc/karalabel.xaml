@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="300">
     <Grid>
-        <TextBlock x:Name="lbBg" TextWrapping="NoWrap" Text="karatext" FontSize="36" Width="301" Height="51" VerticalAlignment="Center" HorizontalAlignment="Left" />
-        <TextBlock x:Name="lbOverlay" TextWrapping="NoWrap" Text="karatext" FontSize="36" Width="301" Height="51" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock x:Name="lbBg" TextWrapping="NoWrap" Text="karatext" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock x:Name="lbFr" TextWrapping="NoWrap" Text="karatext" FontSize="36" HorizontalAlignment="Left" VerticalAlignment="Center" />
     </Grid>
 </UserControl>

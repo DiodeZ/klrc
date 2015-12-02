@@ -5,7 +5,8 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
 
-        <local:karalabel HorizontalAlignment="Left" Margin="135,145,0,0" VerticalAlignment="Top" Width="184" FrontColor="#FF2BCD1B"/>
+        <local:karalabel x:Name="mytest" HorizontalAlignment="Left" Margin="48,141,0,0" VerticalAlignment="Top" Width="368" FrontColor="#FF2BCD1B" FontFamily="Rockwell Extra Bold" FontSize="36" Text="Karaoke is fun!" Height="68"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="317,57,0,0" VerticalAlignment="Top" Width="75" FontSize="20" Click="Button_Click"/>
 
     </Grid>
 </Window>
