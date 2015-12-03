@@ -22,8 +22,13 @@ namespace klrc
     /// </summary>
     public partial class karalabel : UserControl
     {
-        private double duration;
-        private List<double> tick;
+        private struct TimeSync
+        {
+            public int len;
+            public Duration duration;
+        };
+        private List<TimeSync> seriesTime;
+        private int indexPlay = 0;
         private DoubleAnimation myAnimate;
         private Storyboard myStoryboard;
         public karalabel()
@@ -31,8 +36,7 @@ namespace klrc
             InitializeComponent();
             this.FrontColor = new SolidColorBrush(Colors.Red);
             this.BackColor = new SolidColorBrush(Colors.Black);
-            duration = 10000;//10 seconds
-            tick = new List<double>();
+            seriesTime = new List<TimeSync>();
             lbFr.Width = 0;
             //init animate
             myAnimate = new DoubleAnimation(0, 0, new Duration(TimeSpan.FromMilliseconds(1000)));
@@ -40,6 +44,7 @@ namespace klrc
             myStoryboard.Children.Add(myAnimate);
             Storyboard.SetTargetProperty(myAnimate, new PropertyPath(TextBlock.WidthProperty));
             Storyboard.SetTarget(myAnimate, this.lbFr);
+            myStoryboard.Completed += new EventHandler(StoryBoard_Completed);
         }
         /// <summary>
         /// Get the required height and width of the specified text. Uses FortammedText
@@ -55,15 +60,76 @@ namespace klrc
                                                  Brushes.Black);
             return new Size(ft.Width, ft.Height);
         }
+        public void clearSeriesTime()
+        {
+            seriesTime.Clear();
+        }
+        public bool addTimeSync(int textLen, TimeSpan time)
+        {
+            if (seriesTime.Count > 0)
+            {
+                if (textLen < seriesTime[seriesTime.Count - 1].len)
+                {
+                    return false;
+                }
+            }
+            if (textLen > this.Text.Length)
+            {
+                return false;
+            }
+            TimeSync tmp = new TimeSync();
+            tmp.len = textLen;
+            tmp.duration = new Duration(time);
+            seriesTime.Add(tmp);
+            return true;
+        }
         public void startAnimate()
         {
 
-            Size x = MeasureTextSize(lbBg, 11);
+            indexPlay = 0;
+            animateIndex(indexPlay);
+        }
+        private void animateIndex(int i)
+        {
+            indexPlay += 1;
+            if (seriesTime.Count == 0)
+            {
+                myAnimate.From = 0;
+                myAnimate.To = this.lbBg.ActualWidth;
+                myAnimate.Duration = new Duration(TimeSpan.FromMilliseconds(500));
+                myStoryboard.Begin();
+            }
+            else
+            {
+                if (indexPlay - 1 < seriesTime.Count)
+                {
+                    if (indexPlay > 1)
+                    {
+                        myAnimate.From = myAnimate.To;
+                    }
+                    else
+                    {
+                        myAnimate.From = 0;
+                    }
+                    Size x = MeasureTextSize(lbBg, seriesTime[indexPlay - 1].len);
+                    myAnimate.To = x.Width;
+                    if (myAnimate.From > myAnimate.To) //this should be never happen
+                    {
+                        myAnimate.To = myAnimate.From;
+                    }
+                    myAnimate.Duration = seriesTime[indexPlay-1].duration;
+                    myStoryboard.Begin();
 
-            myAnimate.From = 0;
-            myAnimate.To = x.Width;// this.lbBg.ActualWidth;
-            myAnimate.Duration = new Duration(TimeSpan.FromMilliseconds(500));
-            myStoryboard.Begin();
+                }
+
+            }
+        }
+        private void StoryBoard_Completed(object sender, EventArgs e)
+        {
+            if (indexPlay < seriesTime.Count)
+            {
+                animateIndex(indexPlay);
+            }
         }
         public string Text { 
             get{
@@ -98,7 +164,7 @@ namespace klrc
                 lbFr.Foreground = value;
             }
         }
-        public FontFamily FontFamily
+        new public FontFamily FontFamily
         {
             get
             {
@@ -110,7 +176,7 @@ namespace klrc
                 lbFr.FontFamily = value;
             }
         }
-        public double FontSize
+        new public double FontSize
         {
             get
             {
