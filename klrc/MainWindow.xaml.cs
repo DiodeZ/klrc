@@ -27,6 +27,7 @@ namespace klrc
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            mytest.ElapsedTime += mytest_ElapsedTime;    
             mytest.clearSeriesTime();
             mytest.addTimeSync(2, TimeSpan.FromMilliseconds(100));
             mytest.addTimeSync(5, TimeSpan.FromMilliseconds(300));
@@ -34,6 +35,11 @@ namespace klrc
             mytest.addTimeSync(11, TimeSpan.FromMilliseconds(20));
             mytest.addTimeSync(15, TimeSpan.FromMilliseconds(1000));
             mytest.startAnimate();
+        }
+
+        void mytest_ElapsedTime(object sender, EventArgs e)
+        {
+            MessageBox.Show("OK");
         }
     }
 }

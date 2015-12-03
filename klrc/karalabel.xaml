@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="300">
+             d:DesignHeight="50" d:DesignWidth="300" SizeChanged="OnSizeChanged">
+    <UserControl.Resources>
+        <DropShadowEffect x:Key="mydropshadow" x:Name="Ndropshadow" ShadowDepth="0" BlurRadius="6" Color="#FF005DFF" />
+    </UserControl.Resources>
     <Grid>
-        <TextBlock x:Name="lbBg" TextWrapping="NoWrap" Text="karatext" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Left" />
-        <TextBlock x:Name="lbFr" TextWrapping="NoWrap" Text="karatext" FontSize="36" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBlock x:Name="lbBg" Effect="{StaticResource mydropshadow}" TextWrapping="NoWrap" Text="karatext" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="51,0,0,0" Width="158" Height="50">
+        </TextBlock>
+        <TextBlock x:Name="lbFr" TextWrapping="NoWrap" Text="karatext" FontSize="36" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="51,0,0,0" Width="158" Height="50" />
     </Grid>
 </UserControl>

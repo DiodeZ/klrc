@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -31,6 +32,9 @@ namespace klrc
         private int indexPlay = 0;
         private DoubleAnimation myAnimate;
         private Storyboard myStoryboard;
+        DropShadowEffect myShadow;
+        private TextAlignment myTextAlign;
+        public event EventHandler ElapsedTime;
         public karalabel()
         {
             InitializeComponent();
@@ -45,13 +49,16 @@ namespace klrc
             Storyboard.SetTargetProperty(myAnimate, new PropertyPath(TextBlock.WidthProperty));
             Storyboard.SetTarget(myAnimate, this.lbFr);
             myStoryboard.Completed += new EventHandler(StoryBoard_Completed);
+            //
+            myShadow = (DropShadowEffect)this.Resources["mydropshadow"];
+            myTextAlign = TextAlignment.Left;
         }
         /// <summary>
         /// Get the required height and width of the specified text. Uses FortammedText
         /// </summary>
-        public static Size MeasureTextSize(TextBlock txtblx, int len)
+        public static Size MeasureTextSize(TextBlock txtblx, int len = -1)
         {/*FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight, FontStretch fontStretch, double fontSize*/
-            if (len > txtblx.Text.Length) len = txtblx.Text.Length;
+            if (len > txtblx.Text.Length || len == -1) len = txtblx.Text.Length;
             FormattedText ft = new FormattedText(txtblx.Text.Substring(0,len),
                                                  CultureInfo.CurrentCulture,
                                                  FlowDirection.LeftToRight,
@@ -130,7 +137,31 @@ namespace klrc
             {
                 animateIndex(indexPlay);
             }
+            else
+            {
+                OnElapsedTime(EventArgs.Empty);
+            }
         }
+        private void RePositionText()
+        {
+            lbBg.Width = MeasureTextSize(lbBg).Width;
+            switch (myTextAlign)
+            {
+                case TextAlignment.Right:
+                    lbBg.Margin = new Thickness(this.Width - lbBg.Width,0,0,0);//(left, top, right, bottom);
+                    lbFr.Margin = lbBg.Margin;
+                    break;
+                case TextAlignment.Center:
+                    lbBg.Margin = new Thickness((this.Width - lbBg.Width)/2, 0, 0, 0);//(left, top, right, bottom);
+                    lbFr.Margin = lbBg.Margin;
+                    break;
+                default:
+                    lbBg.Margin = new Thickness(0, 0, this.Width - lbBg.Width, 0);//(left, top, right, bottom);
+                    lbFr.Margin = lbBg.Margin;
+                    break;
+            }
+        }
+
         public string Text { 
             get{
             return lbBg.Text;
@@ -139,6 +170,7 @@ namespace klrc
             {
                 lbBg.Text = value;
                 lbFr.Text = value;
+                RePositionText();
             }
         }
 
@@ -188,13 +220,78 @@ namespace klrc
                 lbFr.FontSize = value;
             }
         }
-        
-        public void test(){
-            //lbOverlay.FontSize
+        public Color ShadowColor
+        {
+            get
+            {
+                return myShadow.Color;
+            }
+            set
+            {
+                myShadow.Color = value;
+            }
+        }
+        public double ShadowDepth
+        {
+            get
+            {
+                return myShadow.ShadowDepth;
+            }
+            set
+            {
+                myShadow.ShadowDepth = value;
+            }
+        }
 
-            lbFr.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-            lbFr.Arrange(new Rect(lbFr.DesiredSize));
-            double x = lbFr.ActualWidth;
+        public double ShadowBlurRadius
+        {
+            get
+            {
+                return myShadow.BlurRadius;
+            }
+            set
+            {
+                myShadow.BlurRadius = value;
+            }
+        }
+        public TextAlignment TextAlign
+        {
+            get
+            {
+                return myTextAlign;
+            }
+            set
+            {
+                TextAlignment tmp = myTextAlign;
+                if (value == TextAlignment.Justify)
+                {
+                    myTextAlign = TextAlignment.Left;
+                }
+                else
+                {
+                    myTextAlign = value;
+                }
+                if (tmp != myTextAlign)
+                {
+                    RePositionText();
+                }
+            }
+        }
+        public void test(){
+            //myShadow.Color = Colors.Magenta;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RePositionText();
+        }
+        protected virtual void OnElapsedTime(EventArgs e)
+        {
+            // Here, you use the "this" so it's your own control. You can also
+            // customize the EventArgs to pass something you'd like.
+
+            if (ElapsedTime != null)
+                ElapsedTime(this, e);
         }
     }
 }
