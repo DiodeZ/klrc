@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -52,11 +53,12 @@ namespace klrc
             //
             myShadow = (DropShadowEffect)this.Resources["mydropshadow"];
             myTextAlign = TextAlignment.Left;
+            this.TextPadding = 5;
         }
         /// <summary>
         /// Get the required height and width of the specified text. Uses FortammedText
         /// </summary>
-        public static Size MeasureTextSize(TextBlock txtblx, int len = -1)
+        private Size MeasureTextSize(TextBlock txtblx, int len = -1)
         {/*FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight, FontStretch fontStretch, double fontSize*/
             if (len > txtblx.Text.Length || len == -1) len = txtblx.Text.Length;
             FormattedText ft = new FormattedText(txtblx.Text.Substring(0,len),
@@ -98,6 +100,7 @@ namespace klrc
         }
         private void animateIndex(int i)
         {
+            Debug.WriteLine("animateIndex:: index = " + i.ToString());
             indexPlay += 1;
             if (seriesTime.Count == 0)
             {
@@ -133,6 +136,7 @@ namespace klrc
         }
         private void StoryBoard_Completed(object sender, EventArgs e)
         {
+            Debug.WriteLine("StoryBoard_Completed:: done/total = " + indexPlay.ToString() + "/" + seriesTime.Count.ToString());
             if (indexPlay < seriesTime.Count)
             {
                 animateIndex(indexPlay);
@@ -148,20 +152,21 @@ namespace klrc
             switch (myTextAlign)
             {
                 case TextAlignment.Right:
-                    lbBg.Margin = new Thickness(this.Width - lbBg.Width,0,0,0);//(left, top, right, bottom);
+                    lbBg.Margin = new Thickness(this.ActualWidth - lbBg.Width-this.TextPadding,0,0,0);//(left, top, right, bottom);
                     lbFr.Margin = lbBg.Margin;
                     break;
                 case TextAlignment.Center:
-                    lbBg.Margin = new Thickness((this.Width - lbBg.Width)/2, 0, 0, 0);//(left, top, right, bottom);
+                    lbBg.Margin = new Thickness((this.ActualWidth - lbBg.Width)/2, 0, 0, 0);//(left, top, right, bottom);
                     lbFr.Margin = lbBg.Margin;
                     break;
                 default:
-                    lbBg.Margin = new Thickness(0, 0, this.Width - lbBg.Width, 0);//(left, top, right, bottom);
+                    lbBg.Margin = new Thickness(this.TextPadding, 0, this.ActualWidth - lbBg.Width - this.TextPadding, 0);//(left, top, right, bottom);
                     lbFr.Margin = lbBg.Margin;
                     break;
             }
         }
 
+        public double TextPadding { get; set; }
         public string Text { 
             get{
             return lbBg.Text;

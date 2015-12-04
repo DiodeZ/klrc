@@ -2,13 +2,23 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:klrc" xmlns:WPFSoundVisualizationLib="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib" x:Class="klrc.MainWindow"
-        Title="MainWindow" Height="600" Width="800" Background="#FFCB922F">
+        Title="MainWindow" Height="466.05" Width="800" Background="#FFCB922F">
     <Grid>
-
-        <local:karalabel x:Name="mytest" HorizontalAlignment="Left" Margin="24,226,0,0" VerticalAlignment="Top" Width="758" FrontColor="#FF0023FF" FontFamily="Rockwell Extra Bold" FontSize="36" Text="You don't need to find any thing!" Height="58" ShadowColor="#FF03081D" Foreground="#FFF13333" BackColor="White" ShadowBlurRadius="6" TextAlign="Left"/>
-        <local:karalabel x:Name="mytest_Copy" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="758" FrontColor="#FF0023FF" FontFamily="Rockwell Extra Bold" FontSize="36" Text="Nothing here!" Height="48" ShadowColor="#FF03081D" Foreground="#FFF13333" BackColor="White" ShadowBlurRadius="6" TextAlign="Right"/>
-
-        <WPFSoundVisualizationLib:WaveformTimeline HorizontalAlignment="Left" Margin="24,362,0,0" VerticalAlignment="Top" Width="744" Height="83"/>
+        <StackPanel VerticalAlignment="Top" Margin="0,0,0,0" >
+            <TextBox Height="130" TextWrapping="Wrap" Text="TextBox" AcceptsReturn="True" AcceptsTab="True"/>
+            <local:karalabel x:Name="ktest1" Text="one two three"/>
+            <local:karalabel x:Name="ktest" Text="four five six" TextAlign="Right" BackColor="White" ShadowColor="Black" ShadowBlurRadius="8" FrontColor="#FF0017FF"/>
+            <StackPanel Height="90" Orientation="Horizontal">
+                <WPFSoundVisualizationLib:WaveformTimeline HorizontalAlignment="Left" Width="575" Height="90" VerticalAlignment="Top"/>
+                <WPFSoundVisualizationLib:DigitalClock HorizontalAlignment="Left" VerticalAlignment="Top" Height="67" Time="0:0:1"/>
+            </StackPanel>
+            <StackPanel Height="30" Orientation="Horizontal">
+                <Label Content="File:" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
+                <TextBox Width="500" />
+                <Button Content="Browse" FontSize="16" />
+                <Button x:Name="mytest" Content="Test" Click="Button_Click" FontSize="16" />
+            </StackPanel>
+        </StackPanel>
 
     </Grid>
 </Window>

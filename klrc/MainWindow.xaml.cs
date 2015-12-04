@@ -27,14 +27,16 @@ namespace klrc
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            mytest.ElapsedTime += mytest_ElapsedTime;    
-            mytest.clearSeriesTime();
-            mytest.addTimeSync(2, TimeSpan.FromMilliseconds(100));
-            mytest.addTimeSync(5, TimeSpan.FromMilliseconds(300));
-            mytest.addTimeSync(8, TimeSpan.FromMilliseconds(500));
-            mytest.addTimeSync(11, TimeSpan.FromMilliseconds(20));
-            mytest.addTimeSync(15, TimeSpan.FromMilliseconds(1000));
-            mytest.startAnimate();
+            ktest.Text = "Olala Sync(2, TimeSpan.FromMilliseco";
+            //return;
+            //ktest.ElapsedTime += mytest_ElapsedTime;    
+            ktest.clearSeriesTime();
+            ktest.addTimeSync(2, TimeSpan.FromMilliseconds(100));
+            ktest.addTimeSync(5, TimeSpan.FromMilliseconds(300));
+            ktest.addTimeSync(8, TimeSpan.FromMilliseconds(500));
+            ktest.addTimeSync(11, TimeSpan.FromMilliseconds(20));
+            ktest.addTimeSync(36, TimeSpan.FromMilliseconds(1000));
+            ktest.startAnimate();
         }
 
         void mytest_ElapsedTime(object sender, EventArgs e)
