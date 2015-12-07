@@ -63,6 +63,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="SampleAggregator.cs" />
+    <Compile Include="ShowLyricController.cs" />
     <Page Include="karalabel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

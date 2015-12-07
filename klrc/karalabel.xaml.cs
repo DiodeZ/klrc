@@ -36,6 +36,7 @@ namespace klrc
         DropShadowEffect myShadow;
         private TextAlignment myTextAlign;
         public event EventHandler ElapsedTime;
+
         public karalabel()
         {
             InitializeComponent();
@@ -72,6 +73,80 @@ namespace klrc
         public void clearSeriesTime()
         {
             seriesTime.Clear();
+            this.BeginTime = TimeSpan.FromSeconds(0);
+            this.EndTime = this.BeginTime;
+        }
+        public bool setTextAndTimes(string input)
+        {
+            string realString = "";
+            string timestr = "";
+            TimeSpan tmptime = TimeSpan.FromSeconds(0);
+            int state = 0; //0:read string, 1: read time
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] == '\n') continue;
+                if (state == 0)
+                {
+                    if (input[i] == '[')
+                    {
+                        state = 1;
+                    }
+                    else
+                    {
+                        realString += input[i];
+                    }
+                }
+                else
+                {
+                    if (input[i] == ']')
+                    {
+                        state = 0;
+                        if (tmptime != TimeSpan.FromSeconds(0))
+                        {
+                            TimeSpan time1;
+                            try
+                            {
+                                time1 = TimeSpan.ParseExact(timestr, "c", null);
+                                TimeSync sync = new TimeSync();
+                                sync.duration = new Duration(time1 - tmptime);
+                                sync.len = realString.Length;
+                                seriesTime.Add(sync);
+                                tmptime = time1;
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message);
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                tmptime = TimeSpan.ParseExact(timestr, "c", null);
+                                this.BeginTime = tmptime;
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message);
+                                return false;
+                            }
+                        }
+                        timestr = "";
+                    }
+                    else
+                    {
+                        timestr += input[i];
+                    }
+                }
+            }
+            this.Text = realString;
+            this.EndTime = this.BeginTime;
+            for (int i = 0; i < seriesTime.Count; i++)
+            {
+                this.EndTime += seriesTime[i].duration.TimeSpan;
+            }
+            return true;
         }
         public bool addTimeSync(int textLen, TimeSpan time)
         {
@@ -90,21 +165,75 @@ namespace klrc
             tmp.len = textLen;
             tmp.duration = new Duration(time);
             seriesTime.Add(tmp);
+            this.EndTime = this.BeginTime;
+            for (int i = 0; i < seriesTime.Count; i++)
+            {
+                this.EndTime += seriesTime[i].duration.TimeSpan;
+            }
             return true;
         }
-        public void startAnimate()
+        public void startAnimate(double beginTimeSecond = -1)
+        {
+            if (beginTimeSecond == -1)
+            {
+                indexPlay = 0;
+                animateIndex(indexPlay);
+            }
+            else
+            {
+                double sumtime = this.BeginTime.TotalSeconds;
+                if (seriesTime.Count == 0 || beginTimeSecond < sumtime) return ;
+                int i;
+                for (i = 0; i < seriesTime.Count; i++)
+                {
+                    sumtime += seriesTime[i].duration.TimeSpan.TotalSeconds;
+                    if (sumtime > beginTimeSecond)
+                    {
+                        break;
+                    }
+                }
+                if (i < seriesTime.Count)
+                {
+                    indexPlay = i;
+                    animateIndex(i, getWidthAt(beginTimeSecond));
+                }
+            }
+        }
+        private double getWidthAt(double timeInSecond)
         {
 
-            indexPlay = 0;
-            animateIndex(indexPlay);
+            double sumtime = this.BeginTime.TotalSeconds;
+            if (seriesTime.Count == 0 || timeInSecond < sumtime) return 0;
+            int i;
+            for (i = 0; i < seriesTime.Count; i++)
+            {
+                sumtime += seriesTime[i].duration.TimeSpan.TotalSeconds;
+                if (sumtime > timeInSecond)
+                {
+                    break;
+                }
+            }
+            double mywidth;
+            if (sumtime > timeInSecond)
+            {
+                mywidth = (i == 0) ? 0 : MeasureTextSize(lbBg, seriesTime[i - 1].len).Width;
+                mywidth += (1 - (sumtime - timeInSecond) / seriesTime[i].duration.TimeSpan.TotalSeconds) * (MeasureTextSize(lbBg, seriesTime[i].len).Width - mywidth);
+
+            }
+            else
+            {
+                mywidth = MeasureTextSize(lbBg, seriesTime[i - 1].len).Width;
+            }
+            return mywidth;
         }
-        private void animateIndex(int i)
+        private void animateIndex(int i, double startValue = -1)
         {
+            this.IsPlayingAnimation = true;
             Debug.WriteLine("animateIndex:: index = " + i.ToString());
             indexPlay += 1;
             if (seriesTime.Count == 0)
             {
-                myAnimate.From = 0;
+                myAnimate.From = startValue == -1 ? 0 : startValue;
                 myAnimate.To = this.lbBg.ActualWidth;
                 myAnimate.Duration = new Duration(TimeSpan.FromMilliseconds(500));
                 myStoryboard.Begin();
@@ -121,6 +250,7 @@ namespace klrc
                     {
                         myAnimate.From = 0;
                     }
+                    if (startValue != -1) myAnimate.From = startValue;
                     Size x = MeasureTextSize(lbBg, seriesTime[indexPlay - 1].len);
                     myAnimate.To = x.Width;
                     if (myAnimate.From > myAnimate.To) //this should be never happen
@@ -134,6 +264,10 @@ namespace klrc
 
             }
         }
+        public void setCurrentTime(double timeInSecond)
+        {
+            lbFr.Width = getWidthAt(timeInSecond);
+        }
         private void StoryBoard_Completed(object sender, EventArgs e)
         {
             Debug.WriteLine("StoryBoard_Completed:: done/total = " + indexPlay.ToString() + "/" + seriesTime.Count.ToString());
@@ -144,6 +278,7 @@ namespace klrc
             else
             {
                 OnElapsedTime(EventArgs.Empty);
+                this.IsPlayingAnimation = false;
             }
         }
         private void RePositionText()
@@ -209,8 +344,10 @@ namespace klrc
             }
             set
             {
+                bool changed = lbBg.FontFamily == value;
                 lbBg.FontFamily = value;
                 lbFr.FontFamily = value;
+                if (changed) RePositionText();
             }
         }
         new public double FontSize
@@ -221,8 +358,51 @@ namespace klrc
             }
             set
             {
+                bool changed = lbBg.FontSize == value;
                 lbBg.FontSize = value;
                 lbFr.FontSize = value;
+                if (changed) RePositionText();
+            }
+        }
+        new public FontStretch FontStretch {
+            get
+            {
+                return lbBg.FontStretch;
+            }
+            set
+            {
+                bool changed = lbBg.FontStretch == value;
+                lbBg.FontStretch = value;
+                lbFr.FontStretch = value;
+                if (changed) RePositionText();
+            }
+        }
+        new public FontStyle FontStyle
+        {
+            get
+            {
+                return lbBg.FontStyle;
+            }
+            set
+            {
+                bool changed = lbBg.FontStyle == value;
+                lbBg.FontStyle = value;
+                lbFr.FontStyle = value;
+                if (changed) RePositionText();
+            }
+        }
+        new public FontWeight FontWeight
+        {
+            get
+            {
+                return lbBg.FontWeight;
+            }
+            set
+            {
+                bool changed = lbBg.FontWeight == value;
+                lbBg.FontWeight = value;
+                lbFr.FontWeight = value;
+                if (changed) RePositionText();
             }
         }
         public Color ShadowColor
@@ -282,6 +462,9 @@ namespace klrc
                 }
             }
         }
+        public TimeSpan BeginTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public bool IsPlayingAnimation { get; set; }
         public void test(){
             //myShadow.Color = Colors.Magenta;
         }

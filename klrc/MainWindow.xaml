@@ -2,22 +2,30 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:klrc" xmlns:WPFSoundVisualizationLib="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib" x:Class="klrc.MainWindow"
-        Title="MainWindow" Height="466.05" Width="800" Background="#FFCB922F">
+        Title="MainWindow" Height="466.05" Width="800" Background="#FFCB922F" Closing="Window_Closing" KeyDown="OnKeyDown">
     <Grid>
-        <StackPanel VerticalAlignment="Top" Margin="0,0,0,0" >
-            <TextBox Height="130" TextWrapping="Wrap" Text="TextBox" AcceptsReturn="True" AcceptsTab="True"/>
-            <local:karalabel x:Name="ktest1" Text="one two three"/>
-            <local:karalabel x:Name="ktest" Text="four five six" TextAlign="Right" BackColor="White" ShadowColor="Black" ShadowBlurRadius="8" FrontColor="#FF0017FF"/>
+        <StackPanel VerticalAlignment="Top" Margin="7,5,7,0" >
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="lyricText" Height="130" Width="300" TextWrapping="Wrap" Text="Đêm nay em ngồi lặng yên nghe anh kể" AcceptsReturn="True" AcceptsTab="True"/>
+                <TextBox x:Name="lyricLRC" Height="130" Width="470" TextWrapping="Wrap" Text="Đêm nay em ngồi lặng yên nghe anh kể" AcceptsReturn="True" AcceptsTab="True" Margin="5,0,0,0"/>
+            </StackPanel>
+            
+            <local:karalabel x:Name="ktest1" Text="one two three" FontFamily="Arial" FontWeight="Bold"/>
+            <local:karalabel x:Name="ktest" Text="four five six" TextAlign="Right" BackColor="White" ShadowColor="Black" ShadowBlurRadius="8" FrontColor="#FF0017FF" FontFamily="Arial" FontWeight="Bold"/>
             <StackPanel Height="90" Orientation="Horizontal">
-                <WPFSoundVisualizationLib:WaveformTimeline HorizontalAlignment="Left" Width="575" Height="90" VerticalAlignment="Top"/>
-                <WPFSoundVisualizationLib:DigitalClock HorizontalAlignment="Left" VerticalAlignment="Top" Height="67" Time="0:0:1"/>
+                <WPFSoundVisualizationLib:WaveformTimeline x:Name="waveformTimeline" HorizontalAlignment="Left" Width="556" Height="90" VerticalAlignment="Center" Background="#FFDEFDF1"/>
+                <WPFSoundVisualizationLib:DigitalClock x:Name="clockDisplay" HorizontalAlignment="Left" VerticalAlignment="Center" Height="67" Time="0:0:1" Margin="5,0"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
                 <Label Content="File:" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
-                <TextBox Width="500" />
-                <Button Content="Browse" FontSize="16" />
-                <Button x:Name="mytest" Content="Test" Click="Button_Click" FontSize="16" />
+                <TextBox x:Name="musicPath" VerticalAlignment="Center" Width="450" Text="D:\ChuyenChungMinh-TuanVu_pp6z.mp3" />
+                <Button x:Name="browseButton" Content="Browse" FontSize="16" Padding="10,1" Height="30" VerticalAlignment="Top" Click="browseButton_Click" />
+                <Button x:Name="playButton" Content="Play" Click="playButton_Click" FontSize="16" Padding="10,1" Height="30" VerticalAlignment="Top" />
+                <Button x:Name="pauseButton" Content="Pause" Click="pauseButton_Click" FontSize="16" Height="30" VerticalAlignment="Top" Padding="10,1" />
+                <Button x:Name="stopButton" Content="Stop" Click="stopButton_Click" FontSize="16" Height="30" VerticalAlignment="Top" Padding="10,1" />
+                <Button x:Name="goButton" Content="Go" FontSize="16" Height="30" VerticalAlignment="Top" Padding="10,1" Click="goButton_Click" />
             </StackPanel>
+            <Button Content="My Test" Click="Button_Click" />
         </StackPanel>
 
     </Grid>
