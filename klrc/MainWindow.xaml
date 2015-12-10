@@ -9,12 +9,12 @@
                 <TextBox x:Name="lyricText" Height="130" Width="300" TextWrapping="Wrap" Text="Đêm nay em ngồi lặng yên nghe anh kể" AcceptsReturn="True" AcceptsTab="True"/>
                 <TextBox x:Name="lyricLRC" Height="130" Width="470" TextWrapping="Wrap" Text="Đêm nay em ngồi lặng yên nghe anh kể" AcceptsReturn="True" AcceptsTab="True" Margin="5,0,0,0"/>
             </StackPanel>
-            
+
             <local:karalabel x:Name="ktest1" Text="one two three" FontFamily="Arial" FontWeight="Bold"/>
             <local:karalabel x:Name="ktest" Text="four five six" TextAlign="Right" BackColor="White" ShadowColor="Black" ShadowBlurRadius="8" FrontColor="#FF0017FF" FontFamily="Arial" FontWeight="Bold"/>
             <StackPanel Height="90" Orientation="Horizontal">
-                <WPFSoundVisualizationLib:WaveformTimeline x:Name="waveformTimeline" HorizontalAlignment="Left" Width="556" Height="90" VerticalAlignment="Center" Background="#FFDEFDF1"/>
-                <WPFSoundVisualizationLib:DigitalClock x:Name="clockDisplay" HorizontalAlignment="Left" VerticalAlignment="Center" Height="67" Time="0:0:1" Margin="5,0"/>
+                <WPFSoundVisualizationLib:WaveformTimeline x:Name="waveformTimeline" HorizontalAlignment="Left" Width="548" Height="90" VerticalAlignment="Center" Background="#FFDEFDF1"/>
+                <WPFSoundVisualizationLib:DigitalClock x:Name="clockDisplay" HorizontalAlignment="Left" VerticalAlignment="Center" Height="54" Time="0:0:1" ShowHours="True" ShowSubSeconds="True" Margin="5,18,5,18" Width="214"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
                 <Label Content="File:" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
